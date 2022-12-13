@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8" />
+        <title>Ptranslator</title>
+        <link rel="stylesheet" href="./public/style.css">
+    </head>
+    <body>
+        
+        <h1>Welcome to pTranslator</h1> 
+
+        <form action="http://localhost:<%- portNumber %>/translate" method="post">
+            <input type="text" name="username" id="username" hidden value="guest">
+            <input type="text" name="password" id="password" hidden value="password">
+            <input type="submit" name="submit" id="submit" value="Just take me to the translator">
+        </form>
+        <hr>
+        <form action="http://localhost:<%- portNumber %>/translate" method="post">
+
+            Username: <input type="text" name="username" id="username"><br>
+            Password: <input type="text" name="password" id="password"><br>
+            <input type="submit" name="submit" id="submit" value="Log In">
+ 
+        </form>
+
+        <hr>
+        <button onclick="location.href='/signup'">Sign Up</button>
+    </body>
+</html>

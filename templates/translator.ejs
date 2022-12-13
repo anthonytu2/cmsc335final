@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8" />
+        <title>Translator</title>
+        <link rel="stylesheet" href="./public/style.css">
+    </head>
+    <body>
+        <h1>Translator</h1>
+        <button>Past Translations</button>
+        <%- username%>
+        <hr>
+
+        <form action="http://localhost<%- portNumber%>/translate">
+            <div>
+                
+                <select name="lang1" id="lang1" required>
+                    <option value="english">english</option>
+                    <option value="spanish">spanish</option>
+                </select>
+                >>>
+                <select name="lang2" id="lang2" required>
+                    <option value="english">english</option>
+                    <option value="spanish">spanish</option>
+                </select>
+                
+            </div>
+            <textarea name="lang1Text" id="lang1Text" cols="80" rows="10"><%- original%></textarea>
+            <input type="submit">
+
+        </form>
+        <textarea name="lang2Text" id="lang2Text" cols="80" rows="10"><%- translation%></textarea>
+
+        <hr>
+    </body>
+</html>
