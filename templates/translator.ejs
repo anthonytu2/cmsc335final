@@ -8,11 +8,11 @@
     </head>
     <body>
         <h1>Translator</h1>
-        <button>Past Translations</button>
+        <button onclick="location.href='/log'">Past Translations</button>
         <%- username%>
         <hr>
 
-        <form action="http://localhost<%- portNumber%>/translate">
+        <form action="http://localhost:<%- portNumber%>/translate">
             <div>
                 
                 <select name="lang1" id="lang1" required>
@@ -26,7 +26,7 @@
                 </select>
                 
             </div>
-            <textarea name="lang1Text" id="lang1Text" cols="80" rows="10"><%- original%></textarea>
+            <textarea name="lang1Text" id="lang1Text" cols="80" rows="10"><%- original%></textarea><br>
             <input type="submit">
 
         </form>

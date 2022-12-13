@@ -43,7 +43,7 @@ const req = http.request(options, function (res) {
 req.write(JSON.stringify({text: 'This is a example text for translation.', source: 'EN', target: 'ES'}));
 req.end();
 
-currentUser = "guest"
+let currentUser = "guest"
 
 // routing section start
 app.set("views", path.resolve(__dirname, "templates"));
@@ -56,20 +56,25 @@ app.get("/", (request, response)=>{
 });
 
 app.get("/translate", (request, response)=>{
-	let {username, password, original, translation} = request.body;
-	currentUser = username || "guest";
-	original = original || "";
-	translation = translation || "";
+	let {username, password, original} = request.body;
+	currentUser = username || currentUser;
+	original = "";
+	translation = "";
 	console.log("tranlate get")
 	response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
 
 });
 
 app.post("/translate", (request, response)=>{
-	let {username, password, original, translation} = request.body;
+	let {username, password, original} = request.body;
 	currentUser = username || currentUser;
 	original = original || "";
-	translation = translation || "";
+	
+	translation = "";
+	/*
+	TODO: use api to convert original text into translation
+	*/
+
 	console.log("translate post")
 	response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
 
@@ -81,15 +86,36 @@ app.get("/signup", (request, response)=>{
 
 });
 
-app.get("/signup", (request, response)=>{
+app.post("/signup", (request, response)=>{
+	let {username, password} = request.body;
+	console.log("signing up")
+	/*
+	TODO: search database if username already exists, 
+	*/
+	if (Math.random() < .5){
+		response.render("signupFail", {username:username})
+	}
+	else {
+		currentUser = username
+		response.render("signupConfirm", {username:username});
 
-	response.render("signup", {portNumber:portNumber});
+	}
+
 
 });
 
+/*
+*TODO: functionality to create a table from a users previous translations and send them in for the get
+*/
+function makeTable(){
+	table = ""
+
+	return table;
+}
+
 app.get("/log", (request, response)=>{
 
-	response.render("log", {portNumber:portNumber});
+	response.render("log", {portNumber:portNumber, table:"table stuff"});
 
 });
 
