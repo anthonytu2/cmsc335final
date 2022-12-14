@@ -60,7 +60,7 @@ app.get("/translate", (request, response)=>{
 		body: `[{"Text":"${original}"}]`
 	};
 	
-	fetch(`https://microsoft-translator-text.p.rapidapi.com/translate?to%5B0%5D=es&api-version=3.0&profanityAction=NoAction&textType=plain`, options)
+	fetch(`https://microsoft-translator-text.p.rapidapi.com/translate?to%5B0%5D=${lang}&api-version=3.0&profanityAction=NoAction&textType=plain`, options)
 	.then(response => response.json())
 	.then(res => {let resJSON = res[0]
 		translation = resJSON.translations[0].text
