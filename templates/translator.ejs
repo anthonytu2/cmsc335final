@@ -14,13 +14,9 @@
 
         <form action="http://localhost:<%- portNumber%>/translate" method= "get">
             <div>
-                
-                <select name="lang1" id="lang1" required>
-                    <option value="english">english</option>
-                    <option value="spanish">spanish</option>
-                </select>
-                >>>
+                Translate text to 
                 <select name="lang2" id="lang2" required>
+                    <option value="none" selected disabled hidden>Select a Language</option>
                     <option value="english">english</option>
                     <option value="spanish">spanish</option>
                 </select>
