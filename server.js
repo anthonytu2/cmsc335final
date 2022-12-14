@@ -12,38 +12,26 @@ app.use(express.static(__dirname + "/public"));
 const portNumber = process.argv[2] || 5000;
 console.log(`Visit http://localhost:${portNumber}`);
 
+// Microsoft Translator Text API
+// Starter code
+const fetch = require('node-fetch');
 
-// DeepL Translator API 
+const url = 'https://microsoft-translator-text.p.rapidapi.com/translate?to%5B0%5D=%3CREQUIRED%3E&api-version=3.0&profanityAction=NoAction&textType=plain';
+
 const options = {
-	"method": "POST",
-	"hostname": "deepl-translator.p.rapidapi.com",
-	"port": null,
-	"path": "/translate",
-	"headers": {
-		"content-type": "application/json",
-		"X-RapidAPI-Key": "SIGN-UP-FOR-KEY",
-		"X-RapidAPI-Host": "deepl-translator.p.rapidapi.com",
-		"useQueryString": true
-	}
+  method: 'POST',
+  headers: {
+    'content-type': 'application/json',
+    'X-RapidAPI-Key': '252feb1770msh525fa056a0b9266p16d177jsnefa8d131f1e8',
+    'X-RapidAPI-Host': 'microsoft-translator-text.p.rapidapi.com'
+  },
+  body: '[{"Text":"I would really like to drive your car around the block a few times."}]'
 };
 
-const req = http.request(options, function (res) {
-	const chunks = [];
-
-	res.on("data", function (chunk) {
-		chunks.push(chunk);
-	});
-
-	res.on("end", function () {
-		const body = Buffer.concat(chunks);
-		console.log(body.toString());
-	});
-});
-
-req.write(JSON.stringify({text: 'This is a example text for translation.', source: 'EN', target: 'ES'}));
-req.end();
-
-let currentUser = "guest"
+fetch(url, options)
+	.then(res => res.json())
+	.then(json => console.log(json))
+	.catch(err => console.error('error:' + err));
 
 // routing section start
 app.set("views", path.resolve(__dirname, "templates"));
