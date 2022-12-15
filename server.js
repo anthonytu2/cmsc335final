@@ -6,6 +6,7 @@ const fs = require("fs");
 const express = require("express");
 const app = express();
 const { response } = require("express");
+const e = require('express');
 
 process.stdin.setEncoding("utf8");
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -41,13 +42,14 @@ app.get("/", (request, response)=>{
 app.get("/translate", (request, response)=>{
 	let {username, password, original} = request.body;
 	let currentUser = username;
-	original = request.query.lang1Text;
+	original = request.query.lang1Text || "";
 	let translation = "";
-
-	let lang = "en";
+	let lang = request.query.lang2;
 
 	if (lang == "spanish") {
 		lang = "es";
+	} else {
+		lang = "en";
 	}
 
 	const options = {
@@ -64,6 +66,7 @@ app.get("/translate", (request, response)=>{
 	.then(response => response.json())
 	.then(res => {let resJSON = res[0]
 		translation = resJSON.translations[0].text
+		console.log(translation)
 		response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
 	})
 	.catch(err =>{ console.error(err)
