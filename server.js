@@ -123,7 +123,7 @@ app.get("/translate", (request, response)=>{
 	console.log(translation)
 });
 
-app.post("/translate", (request, response)=>{
+app.post("/translate", async (request, response) => {
 	let {username, password, original} = request.body;
 	let currentUser = username || currentUser;
 	let translation = "";
@@ -131,15 +131,15 @@ app.post("/translate", (request, response)=>{
 	if(currentUser === "guest"){
 		await clearGuestHistory(client, databaseAndCollection);
 	}
-	console.log("translate post")
+	// console.log("translate post")
 	response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
 });
 
-app.get("/signup", (request, response)=>{
+app.get("/signup", (request, response) => {
 	response.render("signup", {portNumber:portNumber});
 });
 
-app.post("/signup", async (request, response)=>{
+app.post("/signup", async (request, response) => {
 	let {username, password} = request.body;
 	console.log("signing up")
 	/*
