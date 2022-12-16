@@ -4,19 +4,22 @@
     <head>
         <meta charset="utf-8" />
         <title>Previous Translations</title>
-        <link rel="stylesheet" href="./public/style.css">
+        <link rel="stylesheet" href="../styles/general.css">
+        <link rel="stylesheet" href="../styles/log.css">
     </head>
     <body>
         <h1>Previous Translations</h1>
-        <table>
-            <tr>
-                <th>Language 1</th>
-                <th>Original Text</th>
-                <th>Language 2</th>
-                <th>Translated Text</th>
-            </tr>
-            <%- table%>
-        </table>
+        <div id="scrollbar">
+            <table border="1">
+                <tr>
+                    <th>Language 1</th>
+                    <th>Original Text</th>
+                    <th>Language 2</th>
+                    <th>Translated Text</th>
+                </tr>
+                <%- table%>
+            </table>
+        </div>
         <hr>
         <form action="http://localhost:<%- portNumber%>/translate" method="get">
             <input type="hidden" id="username" name="username" value="<%- username %>">

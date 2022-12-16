@@ -1,0 +1,19 @@
+body {
+    border: 0.1rem solid gray;
+    background-color: antiquewhite;
+    border-radius: 1.5em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    padding: 2em;
+    height: 38em;
+    width: 25em;
+}
+
+#scrollbar {
+    width: 25em; 
+    height: 30em; 
+    line-height: 1em; 
+    overflow: scroll;
+}
