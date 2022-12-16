@@ -1,11 +1,3 @@
-html {
-    background: linear-gradient(#20cae8, #79238a);
-    background-repeat: no-repeat;
-    background-size: cover;
-    position: relative;
-    height: 100%;
-}
-
 body {
     border: 0.1rem solid gray;
     background-color: antiquewhite;
