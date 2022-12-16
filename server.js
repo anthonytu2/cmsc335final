@@ -104,14 +104,8 @@ app.get("/translate", (request, response)=>{
 
 		console.log(translation + " " + lang1)
 
-		try {
-			await client.connect();
-			await insertTrans(client, databaseAndCollection, currentUser, {lang1: lang1, original: original, lang2: lang, translation: translation});
-		} catch (e) {
-			console.error(e);
-		} finally {
-			await client.close();
-		}
+		await insertTrans(client, databaseAndCollection, currentUser, {lang1: lang1, original: original, lang2: lang, translation: translation});
+		
 		console.log(translation)
 		response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
 	})
