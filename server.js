@@ -55,31 +55,15 @@ app.get("/", (request, response)=>{
 });
 
 app.get("/translate", (request, response)=>{
-	let {username, password, original} = request.body;
-	let currentUser = request.query.username;
+	let currentUser = request.query.username || "";
 	console.log("username insert:" + currentUser);
 
-	original = request.query.lang1Text || "";
+	let original = request.query.lang1Text || "";
 	let translation = "";
-	let lang = request.query.lang2;
+	let lang = request.query.lang2 || "";
 
-	const options = {
-		method: 'POST',
-		headers: {
-			'content-type': 'application/json',
-			'X-RapidAPI-Key': '42e2f88aa4msh9b9e63c519efcd4p1e7f5bjsn71acb1cbaca4',
-			'X-RapidAPI-Host': 'microsoft-translator-text.p.rapidapi.com'
-		},
-		body: `[{"Text":"${original}"}]`
-	};
-	
-	fetch(`https://microsoft-translator-text.p.rapidapi.com/translate?to%5B0%5D=${lang}&api-version=3.0&profanityAction=NoAction&textType=plain`, options)
-	.then(response => response.json())
-	.then(async res => {
-		let resJSON = res[0]
-		translation = resJSON.translations[0].text
-		// adding the translation to the history of the user
-		const options2 = {
+	if (original !== ""){
+		const options = {
 			method: 'POST',
 			headers: {
 				'content-type': 'application/json',
@@ -88,28 +72,45 @@ app.get("/translate", (request, response)=>{
 			},
 			body: `[{"Text":"${original}"}]`
 		};
-
-		let lang1 = ""
-
-		// Detects the language of the original text
-		const url = 'https://microsoft-translator-text.p.rapidapi.com/Detect?api-version=3.0';
-		await fetch(url, options)
-			.then(res => res.json())
-			.then(json => {lang1 = json[0].language})
-			.catch(err => console.error('error:' + err));
-
-		console.log(translation + " " + lang1)
-
-		await insertTrans(client, databaseAndCollection, currentUser, {lang1: lang1, original: original, lang2: lang, translation: translation});
-
-		console.log(translation)
+		
+		fetch(`https://microsoft-translator-text.p.rapidapi.com/translate?to%5B0%5D=${lang}&api-version=3.0&profanityAction=NoAction&textType=plain`, options)
+		.then(response => response.json())
+		.then(async res => {
+			let resJSON = res[0]
+			translation = resJSON.translations[0].text
+			// adding the translation to the history of the user
+			const options2 = {
+				method: 'POST',
+				headers: {
+					'content-type': 'application/json',
+					'X-RapidAPI-Key': '42e2f88aa4msh9b9e63c519efcd4p1e7f5bjsn71acb1cbaca4',
+					'X-RapidAPI-Host': 'microsoft-translator-text.p.rapidapi.com'
+				},
+				body: `[{"Text":"${original}"}]`
+			};
+	
+			let lang1 = ""
+	
+			// Detects the language of the original text
+			const url = 'https://microsoft-translator-text.p.rapidapi.com/Detect?api-version=3.0';
+			await fetch(url, options)
+				.then(res => res.json())
+				.then(json => {lang1 = json[0].language})
+				.catch(err => console.error('error:' + err));
+	
+			console.log(translation + " " + lang1)
+	
+			await insertTrans(client, databaseAndCollection, currentUser, {lang1: lang1, original: original, lang2: lang, translation: translation});
+	
+			console.log(translation)
+			response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
+		})
+		.catch(err =>{ console.error(err)
+			response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
+		});
+	} else {
 		response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
-	})
-	.catch(err =>{ console.error(err)
-		response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
-	});
-
-
+	}
 });
 
 app.post("/translate", async (request, response)=>{
@@ -166,33 +167,25 @@ async function makeTable(username){
 	console.log("username:" + username);
 	table = ""
 	// create the table here
-	try {
-		await client.connect();
-		const result = await lookupUser(client, databaseAndCollection, username);
-		console.log(result);
-		result.history.forEach(elem => {
-			table += '<tr>';
-			table += `<td>${elem.lang1}</td>`;
-			table += `<td>${elem.original}</td>`;
-			table += `<td>${elem.lang2}</td>`;
-			table += `<td>${elem.translation}</td>`;
-			table += '</tr>';
-		})
-		return table;
-
-	}catch (e) {
-        console.error(e);
-    } finally {
-        await client.close();
-    }
 	// There will always be a user (Guest or an actual one)
+	const result = await lookupUser(client, databaseAndCollection, username);
+	console.log(result);
+	result.history.forEach(elem => {
+		table += '<tr>';
+		table += `<td>${elem.lang1}</td>`;
+		table += `<td>${elem.original}</td>`;
+		table += `<td>${elem.lang2}</td>`;
+		table += `<td>${elem.translation}</td>`;
+		table += '</tr>';
+	})
+	return table;
 }
 
 app.get("/log", async (request, response)=>{
 	const username = request.query.username;
+	
 	table = await makeTable(username);
-	response.render("log", {portNumber:portNumber, table:table});
-
+	response.render("log", {portNumber:portNumber, table:table, username:username});
 });
 
 
