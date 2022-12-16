@@ -34,9 +34,7 @@ app.set("views", path.resolve(__dirname, "templates"));
 app.set("view engine", "ejs");
 
 app.get("/", (request, response)=>{
-
 	response.render("welcome", {portNumber:portNumber});
-
 });
 
 app.get("/translate", (request, response)=>{
@@ -45,12 +43,6 @@ app.get("/translate", (request, response)=>{
 	original = request.query.lang1Text || "";
 	let translation = "";
 	let lang = request.query.lang2;
-
-	if (lang == "spanish") {
-		lang = "es";
-	} else {
-		lang = "en";
-	}
 
 	const options = {
 		method: 'POST',
@@ -72,12 +64,10 @@ app.get("/translate", (request, response)=>{
 	.catch(err =>{ console.error(err)
 		response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
 	});
-
-
 	console.log(translation)
 });
 
-app.post("/translate", (request, response)=>{
+app.post("/translate", (request, response) => {
 	let {username, password, original} = request.body;
 	let currentUser = username || currentUser;
 	let translation = "";
