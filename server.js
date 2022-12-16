@@ -148,7 +148,7 @@ app.post("/signup", async (request, response) => {
 	*/
 	// Search database to check if username already exists
 	const result = await lookupUser(client, databaseAndCollection, username);
-	if(result.username){
+	if(result != null){
 		response.render("signupFail", {username:username})
 	} else {
 		// add the user to the database
@@ -158,7 +158,7 @@ app.post("/signup", async (request, response) => {
 			history:[]
 		}
 		await insertUser(client, databaseAndCollection, user);
-		response.render("signupConfirm", {username:username});
+		response.render("signupConfirm", {username:username, password: password});
 	}
 });
 
