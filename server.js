@@ -54,7 +54,7 @@ app.get("/", (request, response)=>{
 	response.render("welcome", {portNumber:portNumber});
 });
 
-app.get("/translate", (request, response)=>{
+app.get("/translate", async (request, response)=>{
 	let currentUser = request.query.username || "";
 	console.log("username insert:" + currentUser);
 
