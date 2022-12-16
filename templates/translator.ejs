@@ -14,7 +14,6 @@
             <textarea id="username" hidden name="username"><%- username%></textarea>
             <input type="submit" value="Past Translations">
         </form>
-        
         <br>
         User: <span id="username" name="username"><%- username%></span>
 
@@ -152,6 +151,8 @@
                 <input type="submit">
             </form>
         </fieldset>
-
+        <form action="http://localhost:<%- portNumber %>/" method="get">
+            <input type="submit" value="Home">
+        </form>
     </body>
 </html>
