@@ -2,10 +2,7 @@
 
 Team Members:
 
-Jonathan Ortiz (jaortiz9)
-Bao Ngo (bngo16)
-Anthony Tu (atu)
-Rohan Bhattarai (rbhatt87)
+Jonathan Ortiz (jaortiz9), Bao Ngo (bngo16), Anthony Tu (atu), Rohan Bhattarai (rbhatt87)
 
 App Description:
 
