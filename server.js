@@ -33,6 +33,17 @@ async function hi(){try {
 }}
 hi();
 
+async function listDatabases(client) {
+	let filter = {};
+	const cursor = client.db(databaseAndCollection.db)
+	.collection(databaseAndCollection.collection)
+	.find(filter);
+	
+	const result = await cursor.toArray();
+	console.log(result);
+}
+listDatabases(client);
+
 // Microsoft Translator Text API
 // Starter code
 const url = 'https://microsoft-translator-text.p.rapidapi.com/translate?to%5B0%5D=%3CREQUIRED%3E&api-version=3.0&profanityAction=NoAction&textType=plain';
@@ -59,7 +70,9 @@ app.get("/", (request, response)=>{
 
 app.get("/translate", (request, response)=>{
 	let {username, password, original} = request.body;
-	let currentUser = username;
+	let currentUser = request.query.username;
+	console.log("username insert:" + currentUser);
+
 	original = request.query.lang1Text || "";
 	let translation = "";
 	let lang = request.query.lang2;
@@ -100,7 +113,14 @@ app.get("/translate", (request, response)=>{
 		TODO: Detect the language of the original and save it to lang1
 		*/
 		const lang1 = "place holder"
-		await insertTrans(client, databaseAndCollection, username, {lang1: lang1, original: original, lang2: lang, translation: translation});
+		try {
+			await client.connect();
+			await insertTrans(client, databaseAndCollection, currentUser, {lang1: lang1, original: original, lang2: lang, translation: translation});
+		} catch (e) {
+			console.error(e);
+		} finally {
+			await client.close();
+		}
 		console.log(translation)
 		response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
 	})
@@ -136,7 +156,7 @@ app.post("/signup", async (request, response)=>{
 	*/
 	// Search database to check if username already exists
 	const result = await lookupUser(client, databaseAndCollection, username);
-	if(result){
+	if(result.length > 0){
 		response.render("signupFail", {username:username})
 	} else {
 		// add the user to the database
@@ -145,30 +165,40 @@ app.post("/signup", async (request, response)=>{
 			password:password,
 			history:[]
 		}
-		await insertUser(user);
+		await insertUser(client, databaseAndCollection, user);
 		response.render("signupConfirm", {username:username});
 	}
 });
 
 // Creates a table from a users previous translations and send them in for the get
 async function makeTable(username){
+	console.log("username:" + username);
 	table = ""
 	// create the table here
-	const result = await lookupUser(username);
+	try {
+		await client.connect();
+		const result = await lookupUser(client, databaseAndCollection, username);
+		console.log(result);
+		result.history.forEach(elem => {
+			table += '<tr>';
+			table += `<td>${elem.lang1}</td>`;
+			table += `<td>${elem.original}</td>`;
+			table += `<td>${elem.lang2}</td>`;
+			table += `<td>${elem.translation}</td>`;
+			table += '</tr>';
+		})
+		return table;
+
+	}catch (e) {
+        console.error(e);
+    } finally {
+        await client.close();
+    }
 	// There will always be a user (Guest or an actual one)
-	result.history.forEach(elem => {
-		table += '<tr>';
-		table += `<td>${elem.lang1}</td>`;
-		table += `<td>${elem.original}</td>`;
-		table += `<td>${elem.lang2}</td>`;
-		table += `<td>${elem.translation}</td>`;
-		table += '</tr>';
-	})
-	return table;
 }
 
 app.get("/log", async (request, response)=>{
-	const username = document.getElementById("username").innerText;
+	const username = request.query.username;
 	table = await makeTable(username);
 	response.render("log", {portNumber:portNumber, table:table});
 
@@ -183,8 +213,9 @@ app.listen(portNumber);
 
 // Checks to see if the username exits in the database
 async function lookupUser(client, databaseAndCollection, username){
-	const result = await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).find(username);
-	return result;
+	const result = await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).find({username: username});
+	const res = await result.toArray();
+	return res;
 }
 
 // Inserts the username and password into the database
@@ -194,7 +225,7 @@ async function insertUser(client, databaseAndCollection, user){
 
 // Add new translations into the history of the user
 async function insertTrans(client, databaseAndCollection, username, historyTuple){
-	await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).updateOne(username, {$push:historyTuple});
+	await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).updateOne({username: username}, {$push: {history: historyTuple}});
 }
 
 // Clear the guest history 

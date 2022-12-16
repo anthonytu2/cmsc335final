@@ -8,11 +8,16 @@
     </head>
     <body>
         <h1>Translator</h1>
-        <button onclick="location.href='/log'">Past Translations</button>
-        <span id="username"><%- username%></span>
-        <hr>
+        <form action="http://localhost:<%- portNumber%>/log" method="get">
+            <textarea id="username" hidden name="username"><%- username%></textarea>
+            <input type="submit" value="Past Translations">
 
+        </form>
+        <span id="username" name="username"><%- username%></span>
+        <hr>
         <form action="http://localhost:<%- portNumber%>/translate" method="get">
+            <textarea id="username" hidden name="username"><%- username%></textarea>
+
             <div>
                 Translate text to 
                 <select required name="lang2" id="lang2" >
