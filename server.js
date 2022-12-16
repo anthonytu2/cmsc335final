@@ -88,24 +88,20 @@ app.get("/translate", (request, response)=>{
 			},
 			body: `[{"Text":"${original}"}]`
 		};
-		let lang1 = "place holder"
 
+		let lang1 = ""
+
+		// Detects the language of the original text
 		const url = 'https://microsoft-translator-text.p.rapidapi.com/Detect?api-version=3.0';
 		await fetch(url, options)
 			.then(res => res.json())
 			.then(json => {lang1 = json[0].language})
 			.catch(err => console.error('error:' + err));
 
-
-
-		/* 
-		TODO: Detect the language of the original and save it to lang1
-		*/
-
 		console.log(translation + " " + lang1)
 
 		await insertTrans(client, databaseAndCollection, currentUser, {lang1: lang1, original: original, lang2: lang, translation: translation});
-		
+
 		console.log(translation)
 		response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
 	})
@@ -124,8 +120,14 @@ app.post("/translate", async (request, response)=>{
 	if(currentUser === "guest"){
 		await clearGuestHistory(client, databaseAndCollection);
 	}
-	console.log("translate post")
-	response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
+	const result = await lookupUser(client, databaseAndCollection, currentUser);
+	if (result.username){
+		prompt("No user found. Try again!");
+		response.render("welcome", {portNumber:portNumber});
+	} else {
+		console.log("translate post")
+		response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
+	}
 });
 
 app.get("/signup", (request, response) => {
