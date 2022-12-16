@@ -6,20 +6,20 @@ const bodyParser = require("body-parser");
 const fs = require("fs");
 const express = require("express");
 const app = express();
-const { response } = require("express");
-const e = require('express');
+
+app.set("views", path.resolve(__dirname, "templates"));
+app.set("view engine", "ejs");
+app.use(express.static(__dirname));
+app.use(bodyParser.urlencoded({ extended: false }));
+process.stdin.setEncoding("utf8");
+const portNumber = process.argv[2] || 5000;
+console.log(`Visit http://localhost:${portNumber}`);
 
 // MongoDB imports 
 const userName = process.env.MONGO_DB_USERNAME;
 const passWord = process.env.MONGO_DB_PASSWORD;
 const databaseAndCollection = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION};
 const { MongoClient, ServerApiVersion } = require('mongodb');
-
-process.stdin.setEncoding("utf8");
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(__dirname + "/public"));
-const portNumber = process.argv[2] || 5000;
-console.log(`Visit http://localhost:${portNumber}`);
 
 // Connecting to the Mongo Databse
 const uri = `mongodb+srv://${userName}:${passWord}@cluster0.ae9zey0.mongodb.net/?retryWrites=true&w=majority`;
@@ -47,15 +47,18 @@ const options = {
 };
 
 // routing section start
-app.set("views", path.resolve(__dirname, "templates"));
-app.set("view engine", "ejs");
-
-app.get("/", (request, response)=>{
+app.get("/", (request, response) => {
 	response.render("welcome", {portNumber:portNumber});
 });
 
+<<<<<<< HEAD
+app.get("/translate", (request, response) => {
+	let {username, password, original} = request.body;
+	let currentUser = request.query.username;
+=======
 app.get("/translate", (request, response)=>{
 	let currentUser = request.query.username || "";
+>>>>>>> 812a5b3097e9b0daa61e3c495072565a486564c7
 	console.log("username insert:" + currentUser);
 
 	let original = request.query.lang1Text || "";
@@ -121,6 +124,9 @@ app.post("/translate", async (request, response)=>{
 	if(currentUser === "guest"){
 		await clearGuestHistory(client, databaseAndCollection);
 	}
+<<<<<<< HEAD
+	response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
+=======
 	const result = await lookupUser(client, databaseAndCollection, currentUser);
 	if (result){
 		const pass = await matchPassword(client, databaseAndCollection, currentUser, password);
@@ -134,6 +140,7 @@ app.post("/translate", async (request, response)=>{
 	} else {
 		response.render("signup", {portNumber:portNumber});
 	}
+>>>>>>> 812a5b3097e9b0daa61e3c495072565a486564c7
 });
 
 app.get("/signup", (request, response) => {
