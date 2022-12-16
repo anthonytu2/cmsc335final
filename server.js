@@ -128,7 +128,6 @@ app.post("/translate", async (request, response)=>{
 		} else {
 			response.render("loginFail");
 		}
-		
 	} else {
 		response.render("signup", {portNumber:portNumber});
 	}

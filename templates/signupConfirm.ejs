@@ -4,13 +4,17 @@
     <head>
         <meta charset="utf-8" />
         <title>Sign Up</title>
-        <link rel="stylesheet" href="./public/style.css">
+        <link rel="stylesheet" href="../styles/general.css">
+        <link rel="stylesheet" href="../styles/signupConfirm.css">
     </head>
     <body>
         <form action="../translate" method="post">
             Sign up for <%- username%> successful! Head over to the translator</a>
             <textarea name="username" id="username" hidden><%-username%></textarea>
             <textarea name="password" id="password" hidden><%-password%></textarea>
+            
+            <br>
+
             <input type="submit" value = "Go to translator">
         </form>
     </body>

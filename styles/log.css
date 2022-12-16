@@ -8,5 +8,12 @@ body {
     position: absolute;
     padding: 2em;
     height: 38em;
-    width: 45em;
+    width: 25em;
+}
+
+#scrollbar {
+    width: 25em; 
+    height: 30em; 
+    line-height: 1em; 
+    overflow: scroll;
 }
