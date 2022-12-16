@@ -121,12 +121,17 @@ app.post("/translate", async (request, response)=>{
 		await clearGuestHistory(client, databaseAndCollection);
 	}
 	const result = await lookupUser(client, databaseAndCollection, currentUser);
-	if (result.username){
-		prompt("No user found. Try again!");
-		response.render("welcome", {portNumber:portNumber});
+	if (result){
+		const pass = await matchPassword(client, databaseAndCollection, currentUser, password);
+		if (pass) {
+			console.log("translate post")
+			response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
+		} else {
+			response.render("loginFail");
+		}
+		
 	} else {
-		console.log("translate post")
-		response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
+		response.render("signup", {portNumber:portNumber});
 	}
 });
 
@@ -199,7 +204,7 @@ app.listen(portNumber);
 
 // Checks to see if the username exits in the database
 async function lookupUser(client, databaseAndCollection, username){
-	const result = await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).find({username: username});
+	const result = await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).findOne({username: username});
 	return result;
 }
 
@@ -216,4 +221,10 @@ async function insertTrans(client, databaseAndCollection, username, historyTuple
 // Clear the guest history 
 async function clearGuestHistory(client, databaseAndCollection){
 	await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).updateOne({username:'guest'}, {$set:{history: []}})
+}
+
+// Check if the password matches
+async function matchPassword(client, databaseAndCollection, username, password){
+	const result = await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).findOne({username: username, password: password});
+	return result;
 }
