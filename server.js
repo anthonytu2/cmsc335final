@@ -115,6 +115,7 @@ app.post("/translate", async (request, response)=>{
 	let currentUser = username || currentUser;
 	let translation = "";
 	// TODO: Make sure to clear the guest history
+	console.log(currentUser);
 	if(currentUser === "guest"){
 		await clearGuestHistory(client, databaseAndCollection);
 	}
