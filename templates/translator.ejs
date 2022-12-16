@@ -9,10 +9,10 @@
     <body>
         <h1>Translator</h1>
         <button onclick="location.href='/log'">Past Translations</button>
-        <%- username%>
+        <span id="username"><%- username%></span>
         <hr>
 
-        <form action="http://localhost:<%- portNumber%>/translate" method= "get">
+        <form action="http://localhost:<%- portNumber%>/translate" method="get">
             <div>
                 Translate text to 
                 <select required name="lang2" id="lang2" >
@@ -24,10 +24,8 @@
             </div>
             <textarea name="lang1Text" id="lang1Text" cols="80" rows="10"><%- original%></textarea><br>
             <input type="submit">
-
         </form>
         <textarea name="lang2Text" id="lang2Text" cols="80" rows="10"><%- translation%></textarea>
-
         <hr>
     </body>
 </html>
