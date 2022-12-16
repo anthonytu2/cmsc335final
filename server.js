@@ -123,7 +123,7 @@ app.get("/translate", (request, response)=>{
 	console.log(translation)
 });
 
-app.post("/translate", (request, response)=>{
+app.post("/translate", async (request, response)=>{
 	let {username, password, original} = request.body;
 	let currentUser = username || currentUser;
 	let translation = "";
@@ -131,8 +131,14 @@ app.post("/translate", (request, response)=>{
 	if(currentUser === "guest"){
 		await clearGuestHistory(client, databaseAndCollection);
 	}
-	console.log("translate post")
-	response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
+	const result = await lookupUser(client, databaseAndCollection, currentUser);
+	if (result.username){
+		prompt("No user found. Try again!");
+		response.render("welcome", {portNumber:portNumber});
+	} else {
+		console.log("translate post")
+		response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
+	}
 });
 
 app.get("/signup", (request, response)=>{
@@ -147,7 +153,6 @@ app.post("/signup", async (request, response)=>{
 	*/
 	// Search database to check if username already exists
 	const result = await lookupUser(client, databaseAndCollection, username);
-	console.log(result.username);
 	if(result.username){
 		response.render("signupFail", {username:username})
 	} else {
@@ -206,8 +211,7 @@ app.listen(portNumber);
 // Checks to see if the username exits in the database
 async function lookupUser(client, databaseAndCollection, username){
 	const result = await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).find({username: username});
-	const res = await result.toArray();
-	return res;
+	return result;
 }
 
 // Inserts the username and password into the database
