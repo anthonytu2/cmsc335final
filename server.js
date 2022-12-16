@@ -28,7 +28,6 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function hi(){try {
 	await client.connect();
 } catch(e) {
-	console.log("uh oh");
 	console.log(e);
 }}
 hi();
@@ -156,7 +155,8 @@ app.post("/signup", async (request, response)=>{
 	*/
 	// Search database to check if username already exists
 	const result = await lookupUser(client, databaseAndCollection, username);
-	if(result.length > 0){
+	console.log(result.username);
+	if(result.username){
 		response.render("signupFail", {username:username})
 	} else {
 		// add the user to the database
