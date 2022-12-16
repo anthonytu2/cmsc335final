@@ -28,7 +28,6 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function hi(){try {
 	await client.connect();
 } catch(e) {
-	console.log("uh oh");
 	console.log(e);
 }}
 hi();
@@ -136,7 +135,8 @@ app.post("/signup", async (request, response)=>{
 	*/
 	// Search database to check if username already exists
 	const result = await lookupUser(client, databaseAndCollection, username);
-	if(result){
+	console.log(result.username);
+	if(result.username){
 		response.render("signupFail", {username:username})
 	} else {
 		// add the user to the database
@@ -145,7 +145,7 @@ app.post("/signup", async (request, response)=>{
 			password:password,
 			history:[]
 		}
-		await insertUser(user);
+		await insertUser(client, databaseAndCollection, user);
 		response.render("signupConfirm", {username:username});
 	}
 });
@@ -183,7 +183,7 @@ app.listen(portNumber);
 
 // Checks to see if the username exits in the database
 async function lookupUser(client, databaseAndCollection, username){
-	const result = await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).find(username);
+	const result = await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).findOne({username:username});
 	return result;
 }
 
@@ -194,7 +194,7 @@ async function insertUser(client, databaseAndCollection, user){
 
 // Add new translations into the history of the user
 async function insertTrans(client, databaseAndCollection, username, historyTuple){
-	await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).updateOne(username, {$push:historyTuple});
+	await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).updateOne({username:username}, {$push:historyTuple});
 }
 
 // Clear the guest history 
