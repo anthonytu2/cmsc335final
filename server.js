@@ -51,14 +51,8 @@ app.get("/", (request, response) => {
 	response.render("welcome", {portNumber:portNumber});
 });
 
-<<<<<<< HEAD
-app.get("/translate", (request, response) => {
-	let {username, password, original} = request.body;
-	let currentUser = request.query.username;
-=======
 app.get("/translate", (request, response)=>{
 	let currentUser = request.query.username || "";
->>>>>>> 812a5b3097e9b0daa61e3c495072565a486564c7
 	console.log("username insert:" + currentUser);
 
 	let original = request.query.lang1Text || "";
@@ -121,12 +115,10 @@ app.post("/translate", async (request, response)=>{
 	let currentUser = username || currentUser;
 	let translation = "";
 	// TODO: Make sure to clear the guest history
+	console.log(currentUser);
 	if(currentUser === "guest"){
 		await clearGuestHistory(client, databaseAndCollection);
 	}
-<<<<<<< HEAD
-	response.render("translator", {portNumber:portNumber, username:currentUser, original:original, translation:translation});
-=======
 	const result = await lookupUser(client, databaseAndCollection, currentUser);
 	if (result){
 		const pass = await matchPassword(client, databaseAndCollection, currentUser, password);
@@ -140,7 +132,6 @@ app.post("/translate", async (request, response)=>{
 	} else {
 		response.render("signup", {portNumber:portNumber});
 	}
->>>>>>> 812a5b3097e9b0daa61e3c495072565a486564c7
 });
 
 app.get("/signup", (request, response) => {
