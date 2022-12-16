@@ -7,7 +7,16 @@
         <link rel="stylesheet" href="./public/style.css">
     </head>
     <body>
-        Sign up for <%- username%> successful! Head over to the <a href="/translate">translator</a>
+        <form action="../translate" method="post">
+            Sign up for <%- username%> successful! Head over to the translator</a>
+            <textarea name="username" id="username" hidden><%-username%></textarea>
+            <textarea name="password" id="password" hidden><%-password%></textarea>
+            <input type="submit" value = "Go to translator">
+        </form>
     </body>
+
+    <script>
+
+    </script>
 
 </html>
