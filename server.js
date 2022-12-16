@@ -32,17 +32,6 @@ async function hi(){try {
 }}
 hi();
 
-async function listDatabases(client) {
-	let filter = {};
-	const cursor = client.db(databaseAndCollection.db)
-	.collection(databaseAndCollection.collection)
-	.find(filter);
-	
-	const result = await cursor.toArray();
-	console.log(result);
-}
-listDatabases(client);
-
 // Microsoft Translator Text API
 // Starter code
 const url = 'https://microsoft-translator-text.p.rapidapi.com/translate?to%5B0%5D=%3CREQUIRED%3E&api-version=3.0&profanityAction=NoAction&textType=plain';
@@ -99,11 +88,22 @@ app.get("/translate", (request, response)=>{
 			},
 			body: `[{"Text":"${original}"}]`
 		};
+		let lang1 = "place holder"
+
+		const url = 'https://microsoft-translator-text.p.rapidapi.com/Detect?api-version=3.0';
+		await fetch(url, options)
+			.then(res => res.json())
+			.then(json => {lang1 = json[0].language})
+			.catch(err => console.error('error:' + err));
+
+
 
 		/* 
 		TODO: Detect the language of the original and save it to lang1
 		*/
-		const lang1 = "place holder"
+
+		console.log(translation + " " + lang1)
+
 		try {
 			await client.connect();
 			await insertTrans(client, databaseAndCollection, currentUser, {lang1: lang1, original: original, lang2: lang, translation: translation});
@@ -120,10 +120,9 @@ app.get("/translate", (request, response)=>{
 	});
 
 
-	console.log(translation)
 });
 
-app.post("/translate", (request, response)=>{
+app.post("/translate", async (request, response)=>{
 	let {username, password, original} = request.body;
 	let currentUser = username || currentUser;
 	let translation = "";
